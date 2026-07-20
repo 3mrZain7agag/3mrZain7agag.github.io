@@ -4,6 +4,9 @@ const socials = {
   email: "mailto:amr.hagag.prof@gmail.com",
 };
 
+const resumeUrl =
+  "https://drive.google.com/file/d/1Ou5DKyxfycxjIHLORmqyPxyt0CPQZz4X/view?usp=sharing";
+
 function Icon({ name }) {
   const paths = {
     github:
@@ -18,6 +21,25 @@ function Icon({ name }) {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d={paths[name]} />
+    </svg>
+  );
+}
+
+function ExternalIcon({ size = 13 }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      className="exp-link-icon"
+      aria-hidden="true"
+    >
+      <path d="M14 3h7v7" />
+      <path d="M21 3 10 14" />
+      <path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" />
     </svg>
   );
 }
@@ -44,6 +66,11 @@ function Nav() {
           <li><a href="#experience">Experience</a></li>
           <li><a href="#projects">Projects</a></li>
           <li><a href="#contact">Contact</a></li>
+          <li>
+            <a className="nav-resume" href={resumeUrl} target="_blank" rel="noreferrer">
+              Resume
+            </a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -59,15 +86,18 @@ function Hero() {
           <h1 className="hero-name">Amr Hagag</h1>
           <p className="hero-role">Building pipelines people can trust</p>
           <p className="hero-bio">
-            I design and build end-to-end data platforms — from raw ingestion
-            through orchestration, transformation, and quality checks, to
-            analytics and machine learning. Strong foundation in Python, SQL,
-            Airflow, and Spark, with a focus on reliable, well-tested
-            pipelines over quick hacks.
+            I design and build end-to-end data platforms — from raw
+            ingestion through orchestration, transformation, and quality
+            checks, to analytics and machine learning. Strong foundation in
+            Python, SQL, Airflow, and Spark, with a focus on reliable,
+            well-tested pipelines over quick hacks.
           </p>
           <div className="hero-actions">
             <a className="btn btn-primary" href="#projects">
               View Work
+            </a>
+            <a className="btn btn-secondary" href={resumeUrl} target="_blank" rel="noreferrer">
+              View Resume
             </a>
             <a className="btn btn-secondary" href="#contact">
               Get In Touch
@@ -86,20 +116,23 @@ function Hero() {
           </div>
         </div>
 
-        <div className="pipeline fade-up" style={{ animationDelay: "0.15s" }} aria-hidden="true">
-          <div className="pipeline-stage raw">
-            <div className="pipeline-label">Ingest — Raw</div>
-            <div className="pipeline-value">APIs, files, and streams landed as-is</div>
+        <div className="hero-visual fade-up" style={{ animationDelay: "0.15s" }}>
+          <div className="hero-photo-frame">
+            <img src="/photos/hero-photo.jpg" alt="Amr Hagag" />
           </div>
-          <div className="pipeline-arrow">↓</div>
-          <div className="pipeline-stage refined">
-            <div className="pipeline-label">Transform — Refined</div>
-            <div className="pipeline-value">Cleaned, validated, modeled</div>
-          </div>
-          <div className="pipeline-arrow">↓</div>
-          <div className="pipeline-stage curated">
-            <div className="pipeline-label">Serve — Curated</div>
-            <div className="pipeline-value">Dashboards, features, predictions</div>
+          <div className="pipeline-strip" aria-hidden="true">
+            <div className="pipeline-row raw">
+              <span className="pipeline-row-label">Ingest</span>
+              <span className="pipeline-row-value">Raw APIs, files, streams</span>
+            </div>
+            <div className="pipeline-row refined">
+              <span className="pipeline-row-label">Transform</span>
+              <span className="pipeline-row-value">Cleaned, validated, modeled</span>
+            </div>
+            <div className="pipeline-row curated">
+              <span className="pipeline-row-label">Serve</span>
+              <span className="pipeline-row-value">Dashboards, features, predictions</span>
+            </div>
           </div>
         </div>
       </div>
@@ -136,31 +169,29 @@ function About() {
         <div className="section-head">
           <h2 className="section-title">About</h2>
         </div>
-        <div className="about-grid">
-          <p className="about-text">
-            I'm a Junior Data Engineer and DEPI graduate with hands-on
-            experience building ETL pipelines, designing data warehouses, and
-            implementing cloud-based and lakehouse-style data workflows. I've
-            applied these skills across projects in fraud detection, sales
-            analytics, and a full end-to-end sports-data platform spanning
-            orchestration, streaming, and ML. Awarded 2nd Place in the DEPI
-            Data Engineering Track. I'm looking to contribute to teams
-            building reliable, production-style data systems.
-          </p>
-          <div>
-            {skillGroups.map((g) => (
-              <div className="skill-group" key={g.title}>
-                <p className="skill-group-title">{g.title}</p>
-                <div className="skill-tags">
-                  {g.items.map((i) => (
-                    <span className="skill-tag" key={i}>
-                      {i}
-                    </span>
-                  ))}
-                </div>
+        <p className="about-text">
+          I'm a Junior Data Engineer and DEPI graduate with hands-on
+          experience building ETL pipelines, designing data warehouses, and
+          implementing cloud-based and lakehouse-style data workflows. I've
+          applied these skills across projects in fraud detection, sales
+          analytics, and a full end-to-end sports-data platform spanning
+          orchestration, streaming, and ML. Awarded 2nd Place in the DEPI
+          Data Engineering Track. I'm looking to contribute to teams
+          building reliable, production-style data systems.
+        </p>
+        <div className="skills-block">
+          {skillGroups.map((g) => (
+            <div className="skill-group" key={g.title}>
+              <p className="skill-group-title">{g.title}</p>
+              <div className="skill-tags">
+                {g.items.map((i) => (
+                  <span className="skill-tag" key={i}>
+                    {i}
+                  </span>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -183,6 +214,7 @@ function Experience() {
       org: "Menoufia University",
       desc: "Solved algorithmic problems in C++; ranked 104th on Day 2 of the Regional Contest.",
       tags: ["C++", "Algorithms", "Data Structures"],
+      link: "https://drive.google.com/file/d/1qRZV10o9HuP--ORBBa01wD4In4DF8B3i/view?usp=sharing",
     },
   ];
 
@@ -197,7 +229,13 @@ function Experience() {
           <div className="exp-item" key={it.role}>
             <div className="exp-date">{it.date}</div>
             <div>
-              <h3 className="exp-role">{it.role}</h3>
+              {it.link ? (
+                <a className="exp-role" href={it.link} target="_blank" rel="noreferrer">
+                  {it.role} <ExternalIcon />
+                </a>
+              ) : (
+                <h3 className="exp-role">{it.role}</h3>
+              )}
               <p className="exp-org">{it.org}</p>
               <p className="exp-desc">{it.desc}</p>
               <div className="project-tags">
@@ -237,18 +275,21 @@ function Projects() {
       desc:
         "Cleaned and preprocessed a bank transaction dataset, designed a normalized SQL Server database, and built ETL pipelines into a star-schema warehouse. Implemented cloud workflows in Azure & Databricks supporting ML-based fraud prediction.",
       tags: ["Python", "SQL Server", "ETL", "Azure", "Databricks"],
+      link: "https://drive.google.com/drive/folders/1EB2G468VK8F-VR88Zhe6v8Zdb13dawSt?usp=sharing",
     },
     {
       title: "Sales Data Mart – SSIS Project",
       desc:
         "ETL from AdventureWorks2022 into a Sales Data Mart, with transformations, validation, and optimized loads for efficiency.",
       tags: ["SSIS", "SQL Server", "Data Warehousing"],
+      link: "https://github.com/3mrZain7agag/Building-sales-Data-Mart-using-SSIS",
     },
     {
       title: "Smart E-Commerce Sales Management System",
       desc:
         "Designed a SQL transactional database and built Python preprocessing for data cleaning and validation, improving query performance and reporting efficiency.",
       tags: ["Python", "SQL", "Database Design"],
+      link: "https://drive.google.com/drive/folders/1mdo9n3ijctK0-tlSMgBJPRZO2uVhvWKt?usp=sharing",
     },
   ];
 
@@ -299,13 +340,13 @@ function Projects() {
 
 function Certificates() {
   const certs = [
-    ["Data Engineering Track", "DEPI"],
-    ["Introduction to Data Engineering", "IBM"],
-    ["Data Engineer Associate Track", "DataCamp"],
-    ["Introduction to Databases", "Meta"],
-    ["SQL Advanced/Intermediate/Basic", "HackerRank"],
-    ["Machine Learning with Python", "IBM"],
-    ["HCIA-AI", "Huawei"],
+    ["Data Engineering Track", "DEPI", "https://drive.google.com/file/d/1OXhOmZftMy6rgAnEVRZCLkfCRreyhoS2/view?usp=sharing"],
+    ["Introduction to Data Engineering", "IBM", "https://coursera.org/share/266f1261314964e9b0b4dca283d0c7fe"],
+    ["Data Engineer Associate Track", "DataCamp", "https://www.datacamp.com/certificate/DEA0017900181117"],
+    ["Introduction to Databases", "Meta", "https://drive.google.com/file/d/1N-DpDZ2TIriJjncvHOy2jlDtK7tb81d5/view?usp=sharing"],
+    ["SQL Advanced/Intermediate/Basic", "HackerRank", "https://drive.google.com/file/d/1IcjMyk1EQwzLrYAKITfRWQ1Gh3lOYRfW/view?usp=sharing"],
+    ["Machine Learning with Python", "IBM", "https://drive.google.com/file/d/1IcjMyk1EQwzLrYAKITfRWQ1Gh3lOYRfW/view?usp=sharing"],
+    ["HCIA-AI", "Huawei", "https://drive.google.com/file/d/1pssvvJFd7aBNq8ilXuT3rD7xX9JNetn9/view?usp=sharing"],
   ];
   return (
     <section id="certificates">
@@ -315,11 +356,13 @@ function Certificates() {
           <h2 className="section-title">Certificates</h2>
         </div>
         <div className="cert-grid">
-          {certs.map(([name, issuer]) => (
-            <div className="cert-item" key={name}>
-              <span className="cert-name">{name}</span>
+          {certs.map(([name, issuer, link]) => (
+            <a className="cert-item" key={name} href={link} target="_blank" rel="noreferrer">
+              <span className="cert-name">
+                {name} <ExternalIcon size={12} />
+              </span>
               <span className="cert-issuer">{issuer}</span>
-            </div>
+            </a>
           ))}
         </div>
       </div>
@@ -332,6 +375,9 @@ function Contact() {
     <section id="contact">
       <div className="wrap contact">
         <Strata />
+        <div className="contact-photo">
+          <img src="/photos/contact-photo.jpg" alt="Amr Hagag" />
+        </div>
         <h2 className="contact-title">Let's Connect</h2>
         <p className="contact-text">
           I'm always interested in hearing about new opportunities in data
