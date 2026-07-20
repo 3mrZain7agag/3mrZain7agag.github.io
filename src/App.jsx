@@ -5,7 +5,7 @@ const socials = {
 };
 
 const resumeUrl =
-  "https://drive.google.com/file/d/1Ou5DKyxfycxjIHLORmqyPxyt0CPQZz4X/view?usp=sharing";
+  "https://drive.google.com/drive/folders/10CThsvtWydyQaGhwSJLCj0nMcdP9qp0v?usp=sharing";
 
 function Icon({ name }) {
   const paths = {
@@ -59,7 +59,7 @@ function Nav() {
     <nav className="nav">
       <div className="nav-inner">
         <a className="nav-logo" href="#top">
-          amr<span>.</span>hagag
+          Amr <span>Hagag</span>
         </a>
         <ul className="nav-links">
           <li><a href="#about">About</a></li>
