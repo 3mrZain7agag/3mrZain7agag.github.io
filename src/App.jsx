@@ -1,4 +1,4 @@
-import { useReveal, useActiveSection } from "./useMotion";
+import { useReveal, useActiveSection, useMagnet, useStackCards } from "./useMotion";
 
 const socials = {
   github: "https://github.com/3mrZain7agag",
@@ -83,6 +83,9 @@ function Nav() {
 }
 
 function Hero() {
+  const magnetPrimary = useMagnet({ padding: 40, strength: 7 });
+  const magnetResume = useMagnet({ padding: 40, strength: 7 });
+
   return (
     <header id="top" className="hero">
       <div className="wrap hero-grid">
@@ -98,10 +101,10 @@ function Hero() {
             well-tested pipelines over quick hacks.
           </p>
           <div className="hero-actions">
-            <a className="btn btn-primary" href="#projects">
+            <a ref={magnetPrimary} className="btn btn-primary" href="#projects">
               View Work
             </a>
-            <a className="btn btn-secondary" href={resumeUrl} target="_blank" rel="noreferrer">
+            <a ref={magnetResume} className="btn btn-secondary" href={resumeUrl} target="_blank" rel="noreferrer">
               View Resume
             </a>
             <a className="btn btn-secondary" href="#contact">
@@ -311,6 +314,7 @@ function Projects() {
   ];
 
   const [ref, visible] = useReveal();
+  const { setRef, scales } = useStackCards(projects.length);
 
   return (
     <section id="projects">
@@ -319,40 +323,50 @@ function Projects() {
         <div className="section-head">
           <h2 className="section-title">Projects</h2>
         </div>
-        <div className="projects-grid">
+        <div className="projects-grid stack-grid">
           {projects.map((p, i) => (
-            <div
-              className={`project-card${p.featured ? " featured" : ""} reveal-stagger${visible ? " is-visible" : ""}`}
-              style={{ "--stagger-index": i }}
-              key={p.title}
-            >
-              <div className="project-title-row">
-                <h3 className="project-title">{p.title}</h3>
-                {p.badge && <span className="project-badge">{p.badge}</span>}
-              </div>
-              <p className="project-desc">{p.desc}</p>
-              {p.stats && (
-                <div className="project-stats">
-                  {p.stats.map((s) => (
-                    <div className="project-stat" key={s.label}>
-                      <span className="project-stat-value">{s.value}</span>
-                      <span className="project-stat-label">{s.label}</span>
+            <div className="stack-card-outer" ref={setRef(i)} key={p.title}>
+              <div
+                className="stack-card-inner"
+                style={{
+                  top: `${96 + i * 14}px`,
+                  transform: `scale(${scales[i]})`,
+                  zIndex: i + 1,
+                }}
+              >
+                <div
+                  className={`project-card${p.featured ? " featured" : ""} reveal-stagger${visible ? " is-visible" : ""}`}
+                  style={{ "--stagger-index": i }}
+                >
+                  <div className="project-title-row">
+                    <h3 className="project-title">{p.title}</h3>
+                    {p.badge && <span className="project-badge">{p.badge}</span>}
+                  </div>
+                  <p className="project-desc">{p.desc}</p>
+                  {p.stats && (
+                    <div className="project-stats">
+                      {p.stats.map((s) => (
+                        <div className="project-stat" key={s.label}>
+                          <span className="project-stat-value">{s.value}</span>
+                          <span className="project-stat-label">{s.label}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
+                  <div className="project-tags">
+                    {p.tags.map((t) => (
+                      <span className="project-tag" key={t}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                  {p.link && (
+                    <a className="project-link" href={p.link} target="_blank" rel="noreferrer">
+                      View Project <Icon name="external" />
+                    </a>
+                  )}
                 </div>
-              )}
-              <div className="project-tags">
-                {p.tags.map((t) => (
-                  <span className="project-tag" key={t}>
-                    {t}
-                  </span>
-                ))}
               </div>
-              {p.link && (
-                <a className="project-link" href={p.link} target="_blank" rel="noreferrer">
-                  View Project <Icon name="external" />
-                </a>
-              )}
             </div>
           ))}
         </div>

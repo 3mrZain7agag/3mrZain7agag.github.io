@@ -163,12 +163,14 @@ section { padding: 88px 0; }
   color: #0d1117;
   font-weight: 600;
   border: 1px solid var(--accent);
+  will-change: transform;
 }
 .btn-primary:hover { transform: translateY(-2px); background: var(--accent-soft); }
 .btn-secondary {
   background: transparent;
   color: var(--text);
   border: 1px solid var(--panel-border);
+  will-change: transform;
 }
 .btn-secondary:hover { border-color: var(--accent); transform: translateY(-2px); }
 .hero-social { display: flex; gap: 18px; }
@@ -289,6 +291,33 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
 .exp-desc { font-size: 15px; line-height: 1.7; color: var(--text-muted); margin: 0 0 14px 0; }
 
 .projects-grid { display: grid; gap: 20px; }
+
+/* Sticky-stacking scroll effect for project cards */
+.stack-card-outer {
+  height: 62vh;
+  min-height: 340px;
+}
+.stack-card-outer:last-child {
+  height: auto;
+  min-height: 0;
+}
+.stack-card-inner {
+  position: sticky;
+  transform-origin: top center;
+  will-change: transform;
+}
+@media (max-width: 800px) {
+  /* Sticky-stacking is a desktop flourish; on small screens just stack normally */
+  .stack-card-outer, .stack-card-outer:last-child {
+    height: auto;
+    min-height: 0;
+  }
+  .stack-card-inner {
+    position: static;
+    transform: none !important;
+  }
+}
+
 .project-card {
   background: var(--panel);
   border: 1px solid var(--panel-border);
