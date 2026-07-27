@@ -1,3 +1,5 @@
+import { useReveal, useActiveSection } from "./useMotion";
+
 const socials = {
   github: "https://github.com/3mrZain7agag",
   linkedin: "https://www.linkedin.com/in/amrhagag-dataeng",
@@ -5,7 +7,7 @@ const socials = {
 };
 
 const resumeUrl =
-  "https://drive.google.com/drive/folders/10CThsvtWydyQaGhwSJLCj0nMcdP9qp0v?usp=sharing";
+  "https://drive.google.com/file/d/1Ou5DKyxfycxjIHLORmqyPxyt0CPQZz4X/view?usp=sharing";
 
 function Icon({ name }) {
   const paths = {
@@ -55,6 +57,9 @@ function Strata() {
 }
 
 function Nav() {
+  const active = useActiveSection(["top", "about", "experience", "projects", "contact"]);
+  const linkClass = (id) => (active === id ? "active" : "");
+
   return (
     <nav className="nav">
       <div className="nav-inner">
@@ -62,10 +67,10 @@ function Nav() {
           Amr <span>Hagag</span>
         </a>
         <ul className="nav-links">
-          <li><a href="#about">About</a></li>
-          <li><a href="#experience">Experience</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="#about" className={linkClass("about")}>About</a></li>
+          <li><a href="#experience" className={linkClass("experience")}>Experience</a></li>
+          <li><a href="#projects" className={linkClass("projects")}>Projects</a></li>
+          <li><a href="#contact" className={linkClass("contact")}>Contact</a></li>
           <li>
             <a className="nav-resume" href={resumeUrl} target="_blank" rel="noreferrer">
               Resume
@@ -162,14 +167,16 @@ function About() {
     { title: "Visualization", items: ["Power BI"] },
   ];
 
+  const [ref, visible] = useReveal();
+
   return (
     <section id="about">
-      <div className="wrap">
+      <div className="wrap" ref={ref}>
         <Strata />
         <div className="section-head">
           <h2 className="section-title">About</h2>
         </div>
-        <p className="about-text">
+        <p className={`about-text reveal${visible ? " is-visible" : ""}`}>
           I'm a Junior Data Engineer and DEPI graduate with hands-on
           experience building ETL pipelines, designing data warehouses, and
           implementing cloud-based and lakehouse-style data workflows. I've
@@ -180,8 +187,12 @@ function About() {
           building reliable, production-style data systems.
         </p>
         <div className="skills-block">
-          {skillGroups.map((g) => (
-            <div className="skill-group" key={g.title}>
+          {skillGroups.map((g, i) => (
+            <div
+              className={`skill-group reveal-stagger${visible ? " is-visible" : ""}`}
+              style={{ "--stagger-index": i }}
+              key={g.title}
+            >
               <p className="skill-group-title">{g.title}</p>
               <div className="skill-tags">
                 {g.items.map((i) => (
@@ -218,15 +229,21 @@ function Experience() {
     },
   ];
 
+  const [ref, visible] = useReveal();
+
   return (
     <section id="experience">
-      <div className="wrap">
+      <div className="wrap" ref={ref}>
         <Strata />
         <div className="section-head">
           <h2 className="section-title">Experience</h2>
         </div>
-        {items.map((it) => (
-          <div className="exp-item" key={it.role}>
+        {items.map((it, i) => (
+          <div
+            className={`exp-item reveal-stagger${visible ? " is-visible" : ""}`}
+            style={{ "--stagger-index": i }}
+            key={it.role}
+          >
             <div className="exp-date">{it.date}</div>
             <div>
               {it.link ? (
@@ -293,16 +310,22 @@ function Projects() {
     },
   ];
 
+  const [ref, visible] = useReveal();
+
   return (
     <section id="projects">
-      <div className="wrap">
+      <div className="wrap" ref={ref}>
         <Strata />
         <div className="section-head">
           <h2 className="section-title">Projects</h2>
         </div>
         <div className="projects-grid">
-          {projects.map((p) => (
-            <div className={`project-card${p.featured ? " featured" : ""}`} key={p.title}>
+          {projects.map((p, i) => (
+            <div
+              className={`project-card${p.featured ? " featured" : ""} reveal-stagger${visible ? " is-visible" : ""}`}
+              style={{ "--stagger-index": i }}
+              key={p.title}
+            >
               <div className="project-title-row">
                 <h3 className="project-title">{p.title}</h3>
                 {p.badge && <span className="project-badge">{p.badge}</span>}
@@ -348,16 +371,24 @@ function Certificates() {
     ["Machine Learning with Python", "IBM", "https://drive.google.com/file/d/1IcjMyk1EQwzLrYAKITfRWQ1Gh3lOYRfW/view?usp=sharing"],
     ["HCIA-AI", "Huawei", "https://drive.google.com/file/d/1pssvvJFd7aBNq8ilXuT3rD7xX9JNetn9/view?usp=sharing"],
   ];
+  const [ref, visible] = useReveal();
   return (
     <section id="certificates">
-      <div className="wrap">
+      <div className="wrap" ref={ref}>
         <Strata />
         <div className="section-head">
           <h2 className="section-title">Certificates</h2>
         </div>
         <div className="cert-grid">
-          {certs.map(([name, issuer, link]) => (
-            <a className="cert-item" key={name} href={link} target="_blank" rel="noreferrer">
+          {certs.map(([name, issuer, link], i) => (
+            <a
+              className={`cert-item reveal-stagger${visible ? " is-visible" : ""}`}
+              style={{ "--stagger-index": i }}
+              key={name}
+              href={link}
+              target="_blank"
+              rel="noreferrer"
+            >
               <span className="cert-name">
                 {name} <ExternalIcon size={12} />
               </span>
@@ -371,9 +402,10 @@ function Certificates() {
 }
 
 function Contact() {
+  const [ref, visible] = useReveal();
   return (
     <section id="contact">
-      <div className="wrap contact">
+      <div className={`wrap contact reveal${visible ? " is-visible" : ""}`} ref={ref}>
         <Strata />
         <div className="contact-photo">
           <img src="/photos/contact-photo.jpg" alt="Amr Hagag" />

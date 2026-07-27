@@ -397,3 +397,86 @@ footer {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ---- Extracted motion techniques (plain CSS, no animation library) ---- */
+:root {
+  --ease-luxury: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Scroll-triggered reveal: fade + translateY, one-shot via useReveal() */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s var(--ease-luxury), transform 0.7s var(--ease-luxury);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered children — pass --stagger-index from JS (index * 0.08s) */
+.reveal-stagger {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.55s var(--ease-luxury), transform 0.55s var(--ease-luxury);
+  transition-delay: calc(var(--stagger-index, 0) * 0.08s);
+}
+.reveal-stagger.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-stagger {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .hero-photo-frame img { animation: none !important; }
+}
+
+/* Subtle idle float on the hero photo (toned-down version of a physics drift) */
+.hero-photo-frame {
+  animation: idleFloat 6s var(--ease-luxury) infinite;
+}
+@keyframes idleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Nav active-section indicator */
+.nav-links a.active {
+  color: var(--accent);
+  position: relative;
+}
+.nav-links a.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.nav-links a {
+  position: relative;
+  transition: color 0.3s var(--ease-luxury);
+}
+
+/* Refined hover glow using luxury easing */
+.project-card, .cert-item, .skill-tag {
+  transition: border-color 0.35s var(--ease-luxury), transform 0.35s var(--ease-luxury), box-shadow 0.35s var(--ease-luxury);
+}
+.project-card:hover {
+  box-shadow: 0 0 24px rgba(76, 154, 255, 0.12);
+}
+.cert-item:hover {
+  box-shadow: 0 0 18px rgba(76, 154, 255, 0.1);
+}
+.skill-tag:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 12px rgba(76, 154, 255, 0.18);
+}
+
