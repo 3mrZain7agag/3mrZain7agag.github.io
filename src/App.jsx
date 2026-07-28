@@ -1,4 +1,4 @@
-import { useReveal, useActiveSection, useMagnet, useStackCards } from "./useMotion";
+import { useReveal, useActiveSection, useMagnet, useStackCards, useScrollFade } from "./useMotion";
 
 const socials = {
   github: "https://github.com/3mrZain7agag",
@@ -46,9 +46,9 @@ function ExternalIcon({ size = 13 }) {
   );
 }
 
-function Strata() {
+function Strata({ tone = "cool" }) {
   return (
-    <div className="strata" aria-hidden="true">
+    <div className={`strata tone-${tone}`} aria-hidden="true">
       <span className="b1" />
       <span className="b2" />
       <span className="b3" />
@@ -372,7 +372,7 @@ function Projects() {
   return (
     <section id="projects">
       <div className="wrap" ref={ref}>
-        <Strata />
+        <Strata tone="mid" />
         <div className="section-head">
           <h2 className="section-title">Projects</h2>
         </div>
@@ -447,7 +447,7 @@ function Certificates() {
   return (
     <section id="certificates">
       <div className="wrap" ref={ref}>
-        <Strata />
+        <Strata tone="mid" />
         <div className="section-head">
           <h2 className="section-title">Certificates</h2>
         </div>
@@ -478,7 +478,7 @@ function Contact() {
   return (
     <section id="contact">
       <div className={`wrap contact reveal${visible ? " is-visible" : ""}`} ref={ref}>
-        <Strata />
+        <Strata tone="warm" />
         <div className="contact-photo">
           <img src="/photos/contact-photo.jpg" alt="Amr Hagag" />
         </div>
@@ -516,15 +516,19 @@ function Footer() {
 }
 
 export default function App() {
+  const [fadeRef, opacity] = useScrollFade({ fadeStart: 0.55 });
+
   return (
     <>
       <Nav />
       <div className="wrap pin-wrap">
-        <Hero />
+        <div className="pin-content-col" ref={fadeRef} style={{ opacity }}>
+          <Hero />
+          <About />
+        </div>
         <div className="pin-visual-col">
           <HeroVisual />
         </div>
-        <About />
       </div>
       <Experience />
       <Projects />

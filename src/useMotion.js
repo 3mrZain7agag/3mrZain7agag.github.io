@@ -61,6 +61,60 @@ export function useMagnet({ padding = 60, strength = 6 } = {}) {
 }
 
 /**
+ * useScrollFade — fades an element's opacity toward 0 as the user scrolls
+ * through the final portion of its own height, so content dissolves away
+ * rather than hard-clipping at the viewport edge. fadeStart is the
+ * progress fraction (0-1) at which the fade begins.
+ */
+export function useScrollFade({ fadeStart = 0.55 } = {}) {
+  const ref = useRef(null);
+  const [opacity, setOpacity] = useState(1);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(max-width: 800px)").matches) return;
+
+    let raf = null;
+
+    const compute = () => {
+      const node = ref.current;
+      if (!node) return;
+      const rect = node.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const scrollable = rect.height - vh;
+      if (scrollable <= 0) {
+        setOpacity(1);
+        return;
+      }
+      const progress = Math.min(Math.max(-rect.top / scrollable, 0), 1);
+      if (progress < fadeStart) {
+        setOpacity(1);
+      } else {
+        const t = (progress - fadeStart) / (1 - fadeStart);
+        setOpacity(Math.max(1 - t, 0));
+      }
+      raf = null;
+    };
+
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(compute);
+    };
+
+    compute();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [fadeStart]);
+
+  return [ref, opacity];
+}
+
+/**
  * useStackCards — sticky-stacking scroll effect: as the user scrolls past
  * each card, it sticks near the top while the next card slides over it,
  * scaling the current one down slightly so it recedes. Implemented with a

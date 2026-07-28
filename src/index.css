@@ -48,9 +48,17 @@ a { color: inherit; }
   margin: 0 0 12px 0;
 }
 .strata span { flex: 1; }
-.strata .b1 { background: var(--accent-dim); }
-.strata .b2 { background: var(--accent); }
-.strata .b3 { background: var(--accent-soft); }
+.strata.tone-cool .b1 { background: var(--accent-dim); }
+.strata.tone-cool .b2 { background: var(--accent); }
+.strata.tone-cool .b3 { background: var(--accent-soft); }
+
+.strata.tone-mid .b1 { background: #6b5a9c; }
+.strata.tone-mid .b2 { background: #9c7fc7; }
+.strata.tone-mid .b3 { background: #c8a8d9; }
+
+.strata.tone-warm .b1 { background: #b9793f; }
+.strata.tone-warm .b2 { background: #d9a35c; }
+.strata.tone-warm .b3 { background: #f0c384; }
 
 .eyebrow {
   font-family: var(--font-mono);
@@ -130,17 +138,18 @@ section { padding: 88px 0; }
   z-index: -1;
 }
 
-/* Pinned hero photo: sticks through Hero + About, releases at Experience */
+/* Pinned hero photo: sticks through Hero + About, releases at Experience.
+   Content column fades out (rather than hard-clipping) as it nears the end. */
 .pin-wrap {
   display: grid;
   grid-template-columns: 1.25fr 1fr;
   column-gap: 56px;
 }
-.pin-wrap > .hero-block { grid-column: 1; grid-row: 1; }
-.pin-wrap > .about-block { grid-column: 1; grid-row: 2; padding-top: 40px; }
+.pin-content-col { grid-column: 1; will-change: opacity; }
+.pin-content-col > .hero-block { padding-bottom: 0; }
+.pin-content-col > .about-block { padding-top: 40px; }
 .pin-visual-col {
   grid-column: 2;
-  grid-row: 1 / 3;
   position: sticky;
   top: 96px;
   align-self: start;
@@ -148,9 +157,8 @@ section { padding: 88px 0; }
 }
 @media (max-width: 800px) {
   .pin-wrap { grid-template-columns: 1fr; }
-  .pin-wrap > .hero-block { grid-column: 1; grid-row: auto; order: 1; }
-  .pin-visual-col { grid-column: 1; grid-row: auto; position: static; top: auto; order: 2; }
-  .pin-wrap > .about-block { grid-column: 1; grid-row: auto; order: 3; padding-top: 0; }
+  .pin-content-col { grid-column: 1; order: 1; opacity: 1 !important; }
+  .pin-visual-col { grid-column: 1; position: static; top: auto; order: 2; }
 }
 
 /* Warm glow behind contact, echoing the closing photo's natural tone */
@@ -161,12 +169,38 @@ section { padding: 88px 0; }
   bottom: -60px;
   left: 50%;
   transform: translateX(-50%);
-  width: 70%;
-  height: 380px;
-  background: radial-gradient(closest-side, rgba(212, 165, 116, 0.10), transparent 70%);
+  width: 78%;
+  height: 460px;
+  background: radial-gradient(closest-side, rgba(217, 163, 92, 0.16), transparent 70%);
   pointer-events: none;
   z-index: -1;
 }
+
+/* Transitional violet-blue glow behind Projects/Certificates, bridging cool to warm */
+#projects, #certificates { position: relative; }
+#projects::before {
+  content: "";
+  position: absolute;
+  top: 10%;
+  right: -8%;
+  width: 45%;
+  height: 380px;
+  background: radial-gradient(closest-side, rgba(156, 127, 199, 0.10), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+#certificates::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -8%;
+  width: 45%;
+  height: 340px;
+  background: radial-gradient(closest-side, rgba(200, 168, 217, 0.10), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
 
 
 .hero-name {
@@ -466,10 +500,11 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
 .contact-photo img { width: 100%; height: 100%; object-fit: cover; }
 .contact-title { font-family: var(--font-display); font-weight: 600; font-size: clamp(28px, 4vw, 40px); margin: 0 0 18px 0; }
 .contact-text { color: var(--text-muted); max-width: 52ch; margin: 0 auto 32px auto; line-height: 1.7; font-size: 15.5px; }
-.contact-email { font-family: var(--font-mono); font-size: 18px; color: var(--accent); text-decoration: none; display: inline-block; margin-bottom: 32px; }
+.contact-email { font-family: var(--font-mono); font-size: 18px; color: #d9a35c; text-decoration: none; display: inline-block; margin-bottom: 32px; transition: color 0.3s var(--ease-luxury); }
+.contact-email:hover { color: #f0c384; }
 .contact-social { display: flex; justify-content: center; gap: 22px; margin-bottom: 40px; }
 .contact-social a { color: var(--text-muted); transition: color 0.2s ease; }
-.contact-social a:hover { color: var(--accent); }
+.contact-social a:hover { color: #d9a35c; }
 footer {
   border-top: 1px solid var(--panel-border);
   padding: 28px 0;
