@@ -82,66 +82,68 @@ function Nav() {
   );
 }
 
+function HeroVisual() {
+  return (
+    <div className="hero-visual fade-up" style={{ animationDelay: "0.15s" }}>
+      <div className="hero-photo-frame">
+        <img src="/photos/hero-photo.jpg" alt="Amr Hagag" />
+      </div>
+      <div className="pipeline-strip" aria-hidden="true">
+        <div className="pipeline-row raw">
+          <span className="pipeline-row-label">Ingest</span>
+          <span className="pipeline-row-value">Raw APIs, files, streams</span>
+        </div>
+        <div className="pipeline-row refined">
+          <span className="pipeline-row-label">Transform</span>
+          <span className="pipeline-row-value">Cleaned, validated, modeled</span>
+        </div>
+        <div className="pipeline-row curated">
+          <span className="pipeline-row-label">Serve</span>
+          <span className="pipeline-row-value">Dashboards, features, predictions</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Hero() {
   const magnetPrimary = useMagnet({ padding: 40, strength: 7 });
   const magnetResume = useMagnet({ padding: 40, strength: 7 });
 
   return (
-    <header id="top" className="hero">
-      <div className="wrap hero-grid">
-        <div className="fade-up">
-          <p className="eyebrow">Data Engineer</p>
-          <h1 className="hero-name">Amr Hagag</h1>
-          <p className="hero-role">Building pipelines people can trust</p>
-          <p className="hero-bio">
-            I design and build end-to-end data platforms — from raw
-            ingestion through orchestration, transformation, and quality
-            checks, to analytics and machine learning. Strong foundation in
-            Python, SQL, Airflow, and Spark, with a focus on reliable,
-            well-tested pipelines over quick hacks.
-          </p>
-          <div className="hero-actions">
-            <a ref={magnetPrimary} className="btn btn-primary" href="#projects">
-              View Work
-            </a>
-            <a ref={magnetResume} className="btn btn-secondary" href={resumeUrl} target="_blank" rel="noreferrer">
-              View Resume
-            </a>
-            <a className="btn btn-secondary" href="#contact">
-              Get In Touch
-            </a>
-          </div>
-          <div className="hero-social">
-            <a href={socials.github} target="_blank" rel="noreferrer" aria-label="GitHub">
-              <Icon name="github" />
-            </a>
-            <a href={socials.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
-              <Icon name="linkedin" />
-            </a>
-            <a href={socials.email} aria-label="Email">
-              <Icon name="mail" />
-            </a>
-          </div>
+    <header id="top" className="hero hero-block">
+      <div className="fade-up">
+        <p className="eyebrow">Data Engineer</p>
+        <h1 className="hero-name">Amr Hagag</h1>
+        <p className="hero-role">Building pipelines people can trust</p>
+        <p className="hero-bio">
+          I design and build end-to-end data platforms — from raw
+          ingestion through orchestration, transformation, and quality
+          checks, to analytics and machine learning. Strong foundation in
+          Python, SQL, Airflow, and Spark, with a focus on reliable,
+          well-tested pipelines over quick hacks.
+        </p>
+        <div className="hero-actions">
+          <a ref={magnetPrimary} className="btn btn-primary" href="#projects">
+            View Work
+          </a>
+          <a ref={magnetResume} className="btn btn-secondary" href={resumeUrl} target="_blank" rel="noreferrer">
+            View Resume
+          </a>
+          <a className="btn btn-secondary" href="#contact">
+            Get In Touch
+          </a>
         </div>
-
-        <div className="hero-visual fade-up" style={{ animationDelay: "0.15s" }}>
-          <div className="hero-photo-frame">
-            <img src="/photos/hero-photo.jpg" alt="Amr Hagag" />
-          </div>
-          <div className="pipeline-strip" aria-hidden="true">
-            <div className="pipeline-row raw">
-              <span className="pipeline-row-label">Ingest</span>
-              <span className="pipeline-row-value">Raw APIs, files, streams</span>
-            </div>
-            <div className="pipeline-row refined">
-              <span className="pipeline-row-label">Transform</span>
-              <span className="pipeline-row-value">Cleaned, validated, modeled</span>
-            </div>
-            <div className="pipeline-row curated">
-              <span className="pipeline-row-label">Serve</span>
-              <span className="pipeline-row-value">Dashboards, features, predictions</span>
-            </div>
-          </div>
+        <div className="hero-social">
+          <a href={socials.github} target="_blank" rel="noreferrer" aria-label="GitHub">
+            <Icon name="github" />
+          </a>
+          <a href={socials.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
+            <Icon name="linkedin" />
+          </a>
+          <a href={socials.email} aria-label="Email">
+            <Icon name="mail" />
+          </a>
         </div>
       </div>
     </header>
@@ -173,22 +175,21 @@ function About() {
   const [ref, visible] = useReveal();
 
   return (
-    <section id="about">
-      <div className="wrap" ref={ref}>
-        <Strata />
-        <div className="section-head">
-          <h2 className="section-title">About</h2>
-        </div>
-        <p className={`about-text reveal${visible ? " is-visible" : ""}`}>
-          I'm a Junior Data Engineer and DEPI graduate with hands-on
-          experience building ETL pipelines, designing data warehouses, and
-          implementing cloud-based and lakehouse-style data workflows. I've
-          applied these skills across projects in fraud detection, sales
-          analytics, and a full end-to-end sports-data platform spanning
-          orchestration, streaming, and ML. Awarded 2nd Place in the DEPI
-          Data Engineering Track. I'm looking to contribute to teams
-          building reliable, production-style data systems.
-        </p>
+    <section id="about" className="about-block" ref={ref}>
+      <Strata />
+      <div className="section-head">
+        <h2 className="section-title">About</h2>
+      </div>
+      <p className={`about-text reveal${visible ? " is-visible" : ""}`}>
+        I'm a Junior Data Engineer and DEPI graduate with hands-on
+        experience building ETL pipelines, designing data warehouses, and
+        implementing cloud-based and lakehouse-style data workflows. I've
+        applied these skills across projects in fraud detection, sales
+        analytics, and a full end-to-end sports-data platform spanning
+        orchestration, streaming, and ML. Awarded 2nd Place in the DEPI
+        Data Engineering Track. I'm looking to contribute to teams
+        building reliable, production-style data systems.
+      </p>
         <div className="skills-block">
           {skillGroups.map((g, i) => (
             <div
@@ -207,7 +208,6 @@ function About() {
             </div>
           ))}
         </div>
-      </div>
     </section>
   );
 }
@@ -273,11 +273,61 @@ function Experience() {
   );
 }
 
+function ProjectIcon({ type }) {
+  const icons = {
+    pipeline: (
+      <>
+        <rect x="3" y="4" width="18" height="4" rx="1.5" />
+        <rect x="3" y="10" width="18" height="4" rx="1.5" />
+        <rect x="3" y="16" width="18" height="4" rx="1.5" />
+        <path d="M7 8v2M17 8v2M7 14v2M17 14v2" strokeWidth="1.5" />
+      </>
+    ),
+    shield: (
+      <>
+        <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+        <path d="M9 12l2 2 4-4" />
+      </>
+    ),
+    warehouse: (
+      <>
+        <path d="M3 10l9-6 9 6" />
+        <path d="M5 10v10h14V10" />
+        <path d="M9 20v-6h6v6" />
+      </>
+    ),
+    cart: (
+      <>
+        <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none" />
+        <circle cx="18" cy="20" r="1.4" fill="currentColor" stroke="none" />
+        <path d="M3 4h2l2.4 12h11.2L21 8H6.2" />
+      </>
+    ),
+  };
+  return (
+    <svg
+      className="project-icon"
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {icons[type]}
+    </svg>
+  );
+}
+
 function Projects() {
   const projects = [
     {
       featured: true,
       badge: "Flagship",
+      icon: "pipeline",
       title: "F1 Data Engineering Platform",
       desc:
         "End-to-end personal platform ingesting Formula 1 historical data (2015–2025) through orchestration, a lakehouse, quality checks, streaming, BI, and machine learning.",
@@ -291,6 +341,7 @@ function Projects() {
     },
     {
       badge: "2nd Place — DEPI",
+      icon: "shield",
       title: "Payment Security – Smart Fraud Detection & Analysis",
       desc:
         "Cleaned and preprocessed a bank transaction dataset, designed a normalized SQL Server database, and built ETL pipelines into a star-schema warehouse. Implemented cloud workflows in Azure & Databricks supporting ML-based fraud prediction.",
@@ -298,6 +349,7 @@ function Projects() {
       link: "https://drive.google.com/drive/folders/1EB2G468VK8F-VR88Zhe6v8Zdb13dawSt?usp=sharing",
     },
     {
+      icon: "warehouse",
       title: "Sales Data Mart – SSIS Project",
       desc:
         "ETL from AdventureWorks2022 into a Sales Data Mart, with transformations, validation, and optimized loads for efficiency.",
@@ -305,6 +357,7 @@ function Projects() {
       link: "https://github.com/3mrZain7agag/Building-sales-Data-Mart-using-SSIS",
     },
     {
+      icon: "cart",
       title: "Smart E-Commerce Sales Management System",
       desc:
         "Designed a SQL transactional database and built Python preprocessing for data cleaning and validation, improving query performance and reporting efficiency.",
@@ -339,7 +392,12 @@ function Projects() {
                   style={{ "--stagger-index": i }}
                 >
                   <div className="project-title-row">
-                    <h3 className="project-title">{p.title}</h3>
+                    <span className="project-title-with-icon">
+                      <span className="project-icon-badge">
+                        <ProjectIcon type={p.icon} />
+                      </span>
+                      <h3 className="project-title">{p.title}</h3>
+                    </span>
                     {p.badge && <span className="project-badge">{p.badge}</span>}
                   </div>
                   <p className="project-desc">{p.desc}</p>
@@ -461,8 +519,13 @@ export default function App() {
   return (
     <>
       <Nav />
-      <Hero />
-      <About />
+      <div className="wrap pin-wrap">
+        <Hero />
+        <div className="pin-visual-col">
+          <HeroVisual />
+        </div>
+        <About />
+      </div>
       <Experience />
       <Projects />
       <Certificates />
