@@ -13,7 +13,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -30,6 +30,7 @@ body {
   color: var(--text);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 a { color: inherit; }
@@ -125,27 +126,15 @@ section { padding: 88px 0; }
 
 .hero { padding: 90px 0 40px 0; position: relative; }
 
-/* Blue glow behind hero, echoing the top photo's cool tone */
-.hero::before {
-  content: "";
-  position: absolute;
-  top: -40px;
-  left: -10%;
-  width: 60%;
-  height: 420px;
-  background: radial-gradient(closest-side, rgba(76, 154, 255, 0.14), transparent 70%);
-  pointer-events: none;
-  z-index: -1;
-}
-
 /* Pinned hero photo: sticks through Hero + About, releases at Experience.
-   Content column fades out (rather than hard-clipping) as it nears the end. */
+   The mini pipeline rows beneath the photo fade out near the release point;
+   the photo itself stays fully visible throughout. */
 .pin-wrap {
   display: grid;
   grid-template-columns: 1.25fr 1fr;
   column-gap: 56px;
 }
-.pin-content-col { grid-column: 1; will-change: opacity; }
+.pin-content-col { grid-column: 1; }
 .pin-content-col > .hero-block { padding-bottom: 0; }
 .pin-content-col > .about-block { padding-top: 40px; }
 .pin-visual-col {
@@ -157,51 +146,50 @@ section { padding: 88px 0; }
 }
 @media (max-width: 800px) {
   .pin-wrap { grid-template-columns: 1fr; }
-  .pin-content-col { grid-column: 1; order: 1; opacity: 1 !important; }
+  .pin-content-col { grid-column: 1; order: 1; }
   .pin-visual-col { grid-column: 1; position: static; top: auto; order: 2; }
 }
 
-/* Warm glow behind contact, echoing the closing photo's natural tone */
-#contact { position: relative; }
-#contact::before {
-  content: "";
-  position: absolute;
-  bottom: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 78%;
-  height: 460px;
-  background: radial-gradient(closest-side, rgba(217, 163, 92, 0.16), transparent 70%);
-  pointer-events: none;
-  z-index: -1;
-}
-
-/* Transitional violet-blue glow behind Projects/Certificates, bridging cool to warm */
-#projects, #certificates { position: relative; }
-#projects::before {
-  content: "";
-  position: absolute;
-  top: 10%;
-  right: -8%;
-  width: 45%;
-  height: 380px;
-  background: radial-gradient(closest-side, rgba(156, 127, 199, 0.10), transparent 70%);
-  pointer-events: none;
-  z-index: -1;
-}
-#certificates::before {
-  content: "";
+/* Continuous cool-to-warm wash: one tall gradient behind the whole page,
+   instead of separate glows popping in per section. */
+.page-root { position: relative; }
+.ambient-bg {
   position: absolute;
   top: 0;
-  left: -8%;
-  width: 45%;
-  height: 340px;
-  background: radial-gradient(closest-side, rgba(200, 168, 217, 0.10), transparent 70%);
+  left: 0;
+  right: 0;
+  height: 100%;
   pointer-events: none;
   z-index: -1;
+  background: linear-gradient(
+    to bottom,
+    rgba(76, 154, 255, 0.10) 0%,
+    rgba(76, 154, 255, 0.05) 16%,
+    transparent 30%,
+    transparent 48%,
+    rgba(156, 127, 199, 0.07) 62%,
+    rgba(217, 163, 92, 0.05) 82%,
+    rgba(217, 163, 92, 0.12) 100%
+  );
 }
 
-
+/* Section-scoped accent tone — content (badges, stats, hover states) shifts
+   its accent color to match how far down the page it sits. */
+#about, #experience {
+  --section-accent: var(--accent);
+  --section-accent-dim: var(--accent-dim);
+  --section-accent-soft: var(--accent-soft);
+}
+#projects, #certificates {
+  --section-accent: #9c7fc7;
+  --section-accent-dim: #6b5a9c;
+  --section-accent-soft: #c8a8d9;
+}
+#contact {
+  --section-accent: #d9a35c;
+  --section-accent-dim: #b9793f;
+  --section-accent-soft: #f0c384;
+}
 
 .hero-name {
   font-family: var(--font-display);
@@ -276,6 +264,8 @@ section { padding: 88px 0; }
   display: flex;
   flex-direction: column;
   gap: 8px;
+  transition: opacity 0.2s linear;
+  will-change: opacity;
 }
 .pipeline-row {
   display: flex;
@@ -404,8 +394,8 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
   padding: 28px;
   transition: border-color 0.2s ease, transform 0.2s ease;
 }
-.project-card:hover { border-color: var(--accent-dim); transform: translateY(-3px); }
-.project-card.featured { border-color: rgba(76, 154, 255, 0.4); }
+.project-card:hover { border-color: var(--section-accent, var(--accent-dim)); transform: translateY(-3px); }
+.project-card.featured { border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 40%, transparent); }
 .project-title-row {
   display: flex;
   align-items: baseline;
@@ -425,7 +415,9 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
   justify-content: center;
   background: rgba(76, 154, 255, 0.08);
   border: 1px solid rgba(76, 154, 255, 0.25);
-  color: var(--accent);
+  border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 25%, transparent);
+  background-color: color-mix(in srgb, var(--section-accent, var(--accent)) 8%, transparent);
+  color: var(--section-accent, var(--accent));
 }
 .project-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin: 0; }
 .project-badge {
@@ -433,8 +425,8 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent);
-  border: 1px solid rgba(76, 154, 255, 0.4);
+  color: var(--section-accent, var(--accent));
+  border: 1px solid color-mix(in srgb, var(--section-accent, var(--accent)) 40%, transparent);
   padding: 3px 9px;
   border-radius: 20px;
   white-space: nowrap;
@@ -442,7 +434,7 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
 .project-desc { font-size: 14.5px; line-height: 1.7; color: var(--text-muted); margin: 0 0 16px 0; }
 .project-stats { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 16px; }
 .project-stat { font-family: var(--font-mono); }
-.project-stat-value { font-size: 18px; font-weight: 600; color: var(--accent); display: block; }
+.project-stat-value { font-size: 18px; font-weight: 600; color: var(--section-accent, var(--accent)); display: block; }
 .project-stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
 .project-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
 .project-tag {
@@ -466,7 +458,7 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
   padding-bottom: 2px;
   transition: border-color 0.2s ease, color 0.2s ease;
 }
-.project-link:hover { color: var(--accent); border-color: var(--accent); }
+.project-link:hover { color: var(--section-accent, var(--accent)); border-color: var(--section-accent, var(--accent)); }
 
 .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 @media (max-width: 640px) { .cert-grid { grid-template-columns: 1fr; } }
@@ -483,9 +475,9 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
   text-decoration: none;
   transition: border-color 0.2s ease, transform 0.15s ease;
 }
-.cert-item:hover { border-color: var(--accent); transform: translateY(-2px); }
+.cert-item:hover { border-color: var(--section-accent, var(--accent)); transform: translateY(-2px); }
 .cert-name { color: var(--text); display: inline-flex; align-items: center; gap: 6px; }
-.cert-item:hover .cert-name { color: var(--accent); }
+.cert-item:hover .cert-name { color: var(--section-accent, var(--accent)); }
 .cert-issuer { font-family: var(--font-mono); color: var(--text-muted); font-size: 12.5px; white-space: nowrap; }
 
 .contact { text-align: center; }
@@ -591,10 +583,10 @@ footer {
   transition: border-color 0.35s var(--ease-luxury), transform 0.35s var(--ease-luxury), box-shadow 0.35s var(--ease-luxury);
 }
 .project-card:hover {
-  box-shadow: 0 0 24px rgba(76, 154, 255, 0.12);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--section-accent, var(--accent)) 12%, transparent);
 }
 .cert-item:hover {
-  box-shadow: 0 0 18px rgba(76, 154, 255, 0.1);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--section-accent, var(--accent)) 10%, transparent);
 }
 .skill-tag:hover {
   border-color: var(--accent);

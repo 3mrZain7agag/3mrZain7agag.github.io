@@ -82,13 +82,13 @@ function Nav() {
   );
 }
 
-function HeroVisual() {
+function HeroVisual({ stripOpacity = 1 }) {
   return (
     <div className="hero-visual fade-up" style={{ animationDelay: "0.15s" }}>
       <div className="hero-photo-frame">
         <img src="/photos/hero-photo.jpg" alt="Amr Hagag" />
       </div>
-      <div className="pipeline-strip" aria-hidden="true">
+      <div className="pipeline-strip" style={{ opacity: stripOpacity }} aria-hidden="true">
         <div className="pipeline-row raw">
           <span className="pipeline-row-label">Ingest</span>
           <span className="pipeline-row-value">Raw APIs, files, streams</span>
@@ -516,18 +516,19 @@ function Footer() {
 }
 
 export default function App() {
-  const [fadeRef, opacity] = useScrollFade({ fadeStart: 0.55 });
+  const [wrapRef, stripOpacity] = useScrollFade({ fadeStart: 0.35 });
 
   return (
-    <>
+    <div className="page-root">
+      <div className="ambient-bg" aria-hidden="true" />
       <Nav />
-      <div className="wrap pin-wrap">
-        <div className="pin-content-col" ref={fadeRef} style={{ opacity }}>
+      <div className="wrap pin-wrap" ref={wrapRef}>
+        <div className="pin-content-col">
           <Hero />
           <About />
         </div>
         <div className="pin-visual-col">
-          <HeroVisual />
+          <HeroVisual stripOpacity={stripOpacity} />
         </div>
       </div>
       <Experience />
@@ -535,6 +536,6 @@ export default function App() {
       <Certificates />
       <Contact />
       <Footer />
-    </>
+    </div>
   );
 }
