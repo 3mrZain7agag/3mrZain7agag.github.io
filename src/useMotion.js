@@ -61,6 +61,48 @@ export function useMagnet({ padding = 60, strength = 6 } = {}) {
 }
 
 /**
+ * useEdgeFade — fades an element out as it scrolls toward/past the top of
+ * the viewport, independent of any sticky sibling. Used to dissolve content
+ * that should NOT follow a pinned element's motion — it just fades based
+ * on its own natural (non-sticky) scroll position.
+ */
+export function useEdgeFade({ fadeZone = 220 } = {}) {
+  const ref = useRef(null);
+  const [opacity, setOpacity] = useState(1);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let raf = null;
+
+    const compute = () => {
+      const node = ref.current;
+      if (!node) return;
+      const rect = node.getBoundingClientRect();
+      const t = Math.min(Math.max(rect.top / fadeZone, 0), 1);
+      setOpacity(t);
+      raf = null;
+    };
+
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(compute);
+    };
+
+    compute();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [fadeZone]);
+
+  return [ref, opacity];
+}
+
+/**
  * useScrollFade — fades an element's opacity toward 0 as the user scrolls
  * through the final portion of its own height, so content dissolves away
  * rather than hard-clipping at the viewport edge. fadeStart is the

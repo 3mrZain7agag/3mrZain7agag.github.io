@@ -1,4 +1,4 @@
-import { useReveal, useActiveSection, useMagnet, useStackCards, useScrollFade } from "./useMotion";
+import { useReveal, useActiveSection, useMagnet, useStackCards, useEdgeFade } from "./useMotion";
 
 const socials = {
   github: "https://github.com/3mrZain7agag",
@@ -56,12 +56,22 @@ function Strata({ tone = "cool" }) {
   );
 }
 
+const SECTION_TONE = {
+  top: "#4c9aff",
+  about: "#4c9aff",
+  experience: "#4c9aff",
+  projects: "#9c7fc7",
+  certificates: "#9c7fc7",
+  contact: "#d9a35c",
+};
+
 function Nav() {
   const active = useActiveSection(["top", "about", "experience", "projects", "contact"]);
   const linkClass = (id) => (active === id ? "active" : "");
+  const tone = SECTION_TONE[active] || SECTION_TONE.top;
 
   return (
-    <nav className="nav">
+    <nav className="nav" style={{ "--nav-tone": tone }}>
       <div className="nav-inner">
         <a className="nav-logo" href="#top">
           Amr <span>Hagag</span>
@@ -82,13 +92,22 @@ function Nav() {
   );
 }
 
-function HeroVisual({ stripOpacity = 1 }) {
+function HeroVisual() {
+  const [stripRef, stripOpacity] = useEdgeFade({ fadeZone: 260 });
+
   return (
-    <div className="hero-visual fade-up" style={{ animationDelay: "0.15s" }}>
-      <div className="hero-photo-frame">
-        <img src="/photos/hero-photo.jpg" alt="Amr Hagag" />
+    <div className="hero-visual">
+      <div className="hero-photo-sticky">
+        <div className="hero-photo-frame fade-up" style={{ animationDelay: "0.15s" }}>
+          <img src="/photos/hero-photo.jpg" alt="Amr Hagag" />
+        </div>
       </div>
-      <div className="pipeline-strip" style={{ opacity: stripOpacity }} aria-hidden="true">
+      <div
+        className="pipeline-strip fade-up"
+        style={{ animationDelay: "0.2s", opacity: stripOpacity }}
+        ref={stripRef}
+        aria-hidden="true"
+      >
         <div className="pipeline-row raw">
           <span className="pipeline-row-label">Ingest</span>
           <span className="pipeline-row-value">Raw APIs, files, streams</span>
@@ -328,6 +347,7 @@ function Projects() {
       featured: true,
       badge: "Flagship",
       icon: "pipeline",
+      image: "/projects/f1.jpg",
       title: "F1 Data Engineering Platform",
       desc:
         "End-to-end personal platform ingesting Formula 1 historical data (2015–2025) through orchestration, a lakehouse, quality checks, streaming, BI, and machine learning.",
@@ -342,6 +362,7 @@ function Projects() {
     {
       badge: "2nd Place — DEPI",
       icon: "shield",
+      image: "/projects/fraud.jpg",
       title: "Payment Security – Smart Fraud Detection & Analysis",
       desc:
         "Cleaned and preprocessed a bank transaction dataset, designed a normalized SQL Server database, and built ETL pipelines into a star-schema warehouse. Implemented cloud workflows in Azure & Databricks supporting ML-based fraud prediction.",
@@ -350,6 +371,7 @@ function Projects() {
     },
     {
       icon: "warehouse",
+      image: "/projects/salesdm.jpg",
       title: "Sales Data Mart – SSIS Project",
       desc:
         "ETL from AdventureWorks2022 into a Sales Data Mart, with transformations, validation, and optimized loads for efficiency.",
@@ -358,6 +380,7 @@ function Projects() {
     },
     {
       icon: "cart",
+      image: "/projects/ecommerce.jpg",
       title: "Smart E-Commerce Sales Management System",
       desc:
         "Designed a SQL transactional database and built Python preprocessing for data cleaning and validation, improving query performance and reporting efficiency.",
@@ -391,14 +414,12 @@ function Projects() {
                   className={`project-card${p.featured ? " featured" : ""} reveal-stagger${visible ? " is-visible" : ""}`}
                   style={{ "--stagger-index": i }}
                 >
+                  <div className="project-image-wrap">
+                    <img src={p.image} alt={p.title} className="project-image" loading="lazy" />
+                    {p.badge && <span className="project-badge project-badge-overlay">{p.badge}</span>}
+                  </div>
                   <div className="project-title-row">
-                    <span className="project-title-with-icon">
-                      <span className="project-icon-badge">
-                        <ProjectIcon type={p.icon} />
-                      </span>
-                      <h3 className="project-title">{p.title}</h3>
-                    </span>
-                    {p.badge && <span className="project-badge">{p.badge}</span>}
+                    <h3 className="project-title">{p.title}</h3>
                   </div>
                   <p className="project-desc">{p.desc}</p>
                   {p.stats && (
@@ -516,19 +537,17 @@ function Footer() {
 }
 
 export default function App() {
-  const [wrapRef, stripOpacity] = useScrollFade({ fadeStart: 0.35 });
-
   return (
     <div className="page-root">
       <div className="ambient-bg" aria-hidden="true" />
       <Nav />
-      <div className="wrap pin-wrap" ref={wrapRef}>
+      <div className="wrap pin-wrap">
         <div className="pin-content-col">
           <Hero />
           <About />
         </div>
         <div className="pin-visual-col">
-          <HeroVisual stripOpacity={stripOpacity} />
+          <HeroVisual />
         </div>
       </div>
       <Experience />
