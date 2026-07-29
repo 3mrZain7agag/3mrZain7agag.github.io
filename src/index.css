@@ -49,17 +49,9 @@ a { color: inherit; }
   margin: 0 0 12px 0;
 }
 .strata span { flex: 1; }
-.strata.tone-cool .b1 { background: var(--accent-dim); }
-.strata.tone-cool .b2 { background: var(--accent); }
-.strata.tone-cool .b3 { background: var(--accent-soft); }
-
-.strata.tone-mid .b1 { background: #6b5a9c; }
-.strata.tone-mid .b2 { background: #9c7fc7; }
-.strata.tone-mid .b3 { background: #c8a8d9; }
-
-.strata.tone-warm .b1 { background: #b9793f; }
-.strata.tone-warm .b2 { background: #d9a35c; }
-.strata.tone-warm .b3 { background: #f0c384; }
+.strata .b1 { background: var(--b1, var(--accent-dim)); }
+.strata .b2 { background: var(--b2, var(--accent)); }
+.strata .b3 { background: var(--b3, var(--accent-soft)); }
 
 .eyebrow {
   font-family: var(--font-mono);
@@ -190,24 +182,6 @@ section { padding: 88px 0; }
 }
 @media (hover: none), (prefers-reduced-motion: reduce) {
   .cursor-glow { display: none; }
-}
-
-/* Section-scoped accent tone — content (badges, stats, hover states) shifts
-   its accent color to match how far down the page it sits. */
-#about, #experience {
-  --section-accent: var(--accent);
-  --section-accent-dim: var(--accent-dim);
-  --section-accent-soft: var(--accent-soft);
-}
-#projects, #certificates {
-  --section-accent: #9c7fc7;
-  --section-accent-dim: #6b5a9c;
-  --section-accent-soft: #c8a8d9;
-}
-#contact {
-  --section-accent: #d9a35c;
-  --section-accent-dim: #b9793f;
-  --section-accent-soft: #f0c384;
 }
 
 .hero-name {
@@ -425,8 +399,8 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
   overflow: hidden;
   transition: border-color 0.2s ease, transform 0.2s ease;
 }
-.project-card:hover { border-color: var(--section-accent, var(--accent-dim)); transform: translateY(-3px); }
-.project-card.featured { border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 40%, transparent); }
+.project-card:hover { border-color: var(--local-accent, var(--accent-dim)); transform: translateY(-3px); }
+.project-card.featured { border-color: color-mix(in srgb, var(--local-accent, var(--accent)) 40%, transparent); }
 
 .project-image-wrap {
   margin: 0 -28px 20px -28px;
@@ -473,9 +447,9 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
   justify-content: center;
   background: rgba(76, 154, 255, 0.08);
   border: 1px solid rgba(76, 154, 255, 0.25);
-  border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 25%, transparent);
-  background-color: color-mix(in srgb, var(--section-accent, var(--accent)) 8%, transparent);
-  color: var(--section-accent, var(--accent));
+  border-color: color-mix(in srgb, var(--local-accent, var(--accent)) 25%, transparent);
+  background-color: color-mix(in srgb, var(--local-accent, var(--accent)) 8%, transparent);
+  color: var(--local-accent, var(--accent));
 }
 .project-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin: 0; }
 .project-badge {
@@ -483,8 +457,8 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--section-accent, var(--accent));
-  border: 1px solid color-mix(in srgb, var(--section-accent, var(--accent)) 40%, transparent);
+  color: var(--local-accent, var(--accent));
+  border: 1px solid color-mix(in srgb, var(--local-accent, var(--accent)) 40%, transparent);
   padding: 3px 9px;
   border-radius: 20px;
   white-space: nowrap;
@@ -492,7 +466,7 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
 .project-desc { font-size: 14.5px; line-height: 1.7; color: var(--text-muted); margin: 0 0 16px 0; }
 .project-stats { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 16px; }
 .project-stat { font-family: var(--font-mono); }
-.project-stat-value { font-size: 18px; font-weight: 600; color: var(--section-accent, var(--accent)); display: block; }
+.project-stat-value { font-size: 18px; font-weight: 600; color: var(--local-accent, var(--accent)); display: block; }
 .project-stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
 .project-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
 .project-tag {
@@ -516,7 +490,7 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
   padding-bottom: 2px;
   transition: border-color 0.2s ease, color 0.2s ease;
 }
-.project-link:hover { color: var(--section-accent, var(--accent)); border-color: var(--section-accent, var(--accent)); }
+.project-link:hover { color: var(--local-accent, var(--accent)); border-color: var(--local-accent, var(--accent)); }
 
 .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 @media (max-width: 640px) { .cert-grid { grid-template-columns: 1fr; } }
@@ -533,9 +507,9 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
   text-decoration: none;
   transition: border-color 0.2s ease, transform 0.15s ease;
 }
-.cert-item:hover { border-color: var(--section-accent, var(--accent)); transform: translateY(-2px); }
+.cert-item:hover { border-color: var(--local-accent, var(--accent)); transform: translateY(-2px); }
 .cert-name { color: var(--text); display: inline-flex; align-items: center; gap: 6px; }
-.cert-item:hover .cert-name { color: var(--section-accent, var(--accent)); }
+.cert-item:hover .cert-name { color: var(--local-accent, var(--accent)); }
 .cert-issuer { font-family: var(--font-mono); color: var(--text-muted); font-size: 12.5px; white-space: nowrap; }
 
 .contact { text-align: center; }
@@ -550,11 +524,11 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
 .contact-photo img { width: 100%; height: 100%; object-fit: cover; }
 .contact-title { font-family: var(--font-display); font-weight: 600; font-size: clamp(28px, 4vw, 40px); margin: 0 0 18px 0; }
 .contact-text { color: var(--text-muted); max-width: 52ch; margin: 0 auto 32px auto; line-height: 1.7; font-size: 15.5px; }
-.contact-email { font-family: var(--font-mono); font-size: 18px; color: #d9a35c; text-decoration: none; display: inline-block; margin-bottom: 32px; transition: color 0.3s var(--ease-luxury); }
-.contact-email:hover { color: #f0c384; }
+.contact-email { font-family: var(--font-mono); font-size: 18px; color: var(--local-accent, #d9a35c); text-decoration: none; display: inline-block; margin-bottom: 32px; transition: color 0.3s var(--ease-luxury); }
+.contact-email:hover { opacity: 0.85; }
 .contact-social { display: flex; justify-content: center; gap: 22px; margin-bottom: 40px; }
 .contact-social a { color: var(--text-muted); transition: color 0.2s ease; }
-.contact-social a:hover { color: #d9a35c; }
+.contact-social a:hover { color: var(--local-accent, #d9a35c); }
 footer {
   border-top: 1px solid var(--panel-border);
   padding: 28px 0;
@@ -642,10 +616,10 @@ footer {
   transition: border-color 0.35s var(--ease-luxury), transform 0.35s var(--ease-luxury), box-shadow 0.35s var(--ease-luxury);
 }
 .project-card:hover {
-  box-shadow: 0 0 24px color-mix(in srgb, var(--section-accent, var(--accent)) 12%, transparent);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--local-accent, var(--accent)) 12%, transparent);
 }
 .cert-item:hover {
-  box-shadow: 0 0 18px color-mix(in srgb, var(--section-accent, var(--accent)) 10%, transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--local-accent, var(--accent)) 10%, transparent);
 }
 .skill-tag:hover {
   border-color: var(--accent);

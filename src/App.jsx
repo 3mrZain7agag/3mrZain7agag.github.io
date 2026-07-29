@@ -1,4 +1,4 @@
-import { useReveal, useActiveSection, useMagnet, useStackCards, useEdgeFade, useCursorGlow } from "./useMotion";
+import { useReveal, useActiveSection, useMagnet, useStackCards, useEdgeFade, useCursorGlow, useScrollBlendColor, usePositionAccent } from "./useMotion";
 
 const socials = {
   github: "https://github.com/3mrZain7agag",
@@ -46,9 +46,15 @@ function ExternalIcon({ size = 13 }) {
   );
 }
 
-function Strata({ tone = "cool" }) {
+function Strata() {
+  const [ref, colors] = usePositionAccent();
   return (
-    <div className={`strata tone-${tone}`} aria-hidden="true">
+    <div
+      className="strata"
+      ref={ref}
+      style={{ "--b1": colors.dim, "--b2": colors.base, "--b3": colors.soft }}
+      aria-hidden="true"
+    >
       <span className="b1" />
       <span className="b2" />
       <span className="b3" />
@@ -56,19 +62,10 @@ function Strata({ tone = "cool" }) {
   );
 }
 
-const SECTION_TONE = {
-  top: "#4c9aff",
-  about: "#4c9aff",
-  experience: "#4c9aff",
-  projects: "#9c7fc7",
-  certificates: "#9c7fc7",
-  contact: "#d9a35c",
-};
-
 function Nav() {
   const active = useActiveSection(["top", "about", "experience", "projects", "contact"]);
   const linkClass = (id) => (active === id ? "active" : "");
-  const tone = SECTION_TONE[active] || SECTION_TONE.top;
+  const tone = useScrollBlendColor();
 
   return (
     <nav className="nav" style={{ "--nav-tone": tone }}>
@@ -395,7 +392,7 @@ function Projects() {
   return (
     <section id="projects">
       <div className="wrap" ref={ref}>
-        <Strata tone="mid" />
+        <Strata />
         <div className="section-head">
           <h2 className="section-title">Projects</h2>
         </div>
@@ -410,47 +407,56 @@ function Projects() {
                   zIndex: i + 1,
                 }}
               >
-                <div
-                  className={`project-card${p.featured ? " featured" : ""} reveal-stagger${visible ? " is-visible" : ""}`}
-                  style={{ "--stagger-index": i }}
-                >
-                  <div className="project-image-wrap">
-                    <img src={p.image} alt={p.title} className="project-image" loading="lazy" />
-                    {p.badge && <span className="project-badge project-badge-overlay">{p.badge}</span>}
-                  </div>
-                  <div className="project-title-row">
-                    <h3 className="project-title">{p.title}</h3>
-                  </div>
-                  <p className="project-desc">{p.desc}</p>
-                  {p.stats && (
-                    <div className="project-stats">
-                      {p.stats.map((s) => (
-                        <div className="project-stat" key={s.label}>
-                          <span className="project-stat-value">{s.value}</span>
-                          <span className="project-stat-label">{s.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <div className="project-tags">
-                    {p.tags.map((t) => (
-                      <span className="project-tag" key={t}>
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                  {p.link && (
-                    <a className="project-link" href={p.link} target="_blank" rel="noreferrer">
-                      View Project <Icon name="external" />
-                    </a>
-                  )}
-                </div>
+                <ProjectCard project={p} index={i} visible={visible} />
               </div>
             </div>
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function ProjectCard({ project: p, index: i, visible }) {
+  const [accentRef, colors] = usePositionAccent();
+
+  return (
+    <div
+      ref={accentRef}
+      className={`project-card${p.featured ? " featured" : ""} reveal-stagger${visible ? " is-visible" : ""}`}
+      style={{ "--stagger-index": i, "--local-accent": colors.base }}
+    >
+      <div className="project-image-wrap">
+        <img src={p.image} alt={p.title} className="project-image" loading="lazy" />
+        {p.badge && <span className="project-badge project-badge-overlay">{p.badge}</span>}
+      </div>
+      <div className="project-title-row">
+        <h3 className="project-title">{p.title}</h3>
+      </div>
+      <p className="project-desc">{p.desc}</p>
+      {p.stats && (
+        <div className="project-stats">
+          {p.stats.map((s) => (
+            <div className="project-stat" key={s.label}>
+              <span className="project-stat-value">{s.value}</span>
+              <span className="project-stat-label">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="project-tags">
+        {p.tags.map((t) => (
+          <span className="project-tag" key={t}>
+            {t}
+          </span>
+        ))}
+      </div>
+      {p.link && (
+        <a className="project-link" href={p.link} target="_blank" rel="noreferrer">
+          View Project <Icon name="external" />
+        </a>
+      )}
+    </div>
   );
 }
 
@@ -468,25 +474,13 @@ function Certificates() {
   return (
     <section id="certificates">
       <div className="wrap" ref={ref}>
-        <Strata tone="mid" />
+        <Strata />
         <div className="section-head">
           <h2 className="section-title">Certificates</h2>
         </div>
         <div className="cert-grid">
           {certs.map(([name, issuer, link], i) => (
-            <a
-              className={`cert-item reveal-stagger${visible ? " is-visible" : ""}`}
-              style={{ "--stagger-index": i }}
-              key={name}
-              href={link}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span className="cert-name">
-                {name} <ExternalIcon size={12} />
-              </span>
-              <span className="cert-issuer">{issuer}</span>
-            </a>
+            <CertItem key={name} name={name} issuer={issuer} link={link} index={i} visible={visible} />
           ))}
         </div>
       </div>
@@ -494,12 +488,32 @@ function Certificates() {
   );
 }
 
+function CertItem({ name, issuer, link, index: i, visible }) {
+  const [accentRef, colors] = usePositionAccent();
+  return (
+    <a
+      ref={accentRef}
+      className={`cert-item reveal-stagger${visible ? " is-visible" : ""}`}
+      style={{ "--stagger-index": i, "--local-accent": colors.base }}
+      href={link}
+      target="_blank"
+      rel="noreferrer"
+    >
+      <span className="cert-name">
+        {name} <ExternalIcon size={12} />
+      </span>
+      <span className="cert-issuer">{issuer}</span>
+    </a>
+  );
+}
+
 function Contact() {
   const [ref, visible] = useReveal();
+  const [accentRef, colors] = usePositionAccent();
   return (
-    <section id="contact">
+    <section id="contact" ref={accentRef} style={{ "--local-accent": colors.base }}>
       <div className={`wrap contact reveal${visible ? " is-visible" : ""}`} ref={ref}>
-        <Strata tone="warm" />
+        <Strata />
         <div className="contact-photo">
           <img src="/photos/contact-photo.jpg" alt="Amr Hagag" />
         </div>

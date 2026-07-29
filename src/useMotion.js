@@ -61,6 +61,38 @@ export function useMagnet({ padding = 60, strength = 6 } = {}) {
 }
 
 /**
+ * Shared cool-to-warm color stops + interpolator. Every tone-driven element
+ * on the site (cursor glow, nav, dividers, card accents) reads from this
+ * SAME function, so colors always agree with each other regardless of
+ * which scroll metric drives them.
+ */
+export const TONE_STOPS = [
+  { pos: 0, c: [76, 154, 255] },     // cool blue
+  { pos: 0.55, c: [156, 127, 199] }, // transitional violet
+  { pos: 1, c: [217, 163, 92] },     // warm amber
+];
+
+export function toneColorAt(t) {
+  t = Math.min(Math.max(t, 0), 1);
+  for (let i = 0; i < TONE_STOPS.length - 1; i++) {
+    const a = TONE_STOPS[i], b = TONE_STOPS[i + 1];
+    if (t >= a.pos && t <= b.pos) {
+      const localT = (t - a.pos) / (b.pos - a.pos);
+      return a.c.map((v, idx) => Math.round(v + (b.c[idx] - v) * localT));
+    }
+  }
+  return TONE_STOPS[TONE_STOPS.length - 1].c;
+}
+
+function shade(rgb, amount) {
+  // amount: -1..1, negative darkens toward black, positive lightens toward white
+  return rgb.map((v) => {
+    const target = amount < 0 ? 0 : 255;
+    return Math.round(v + (target - v) * Math.abs(amount));
+  });
+}
+
+/**
  * useCursorGlow — a soft glow that follows the cursor with slight easing
  * (not 1:1), whose color continuously blends across the page's cool-to-warm
  * palette based on overall scroll position (not discrete section jumps).
@@ -74,24 +106,6 @@ export function useCursorGlow() {
     if (!node) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (window.matchMedia("(hover: none)").matches) return; // no real cursor on touch
-
-    const stops = [
-      { pos: 0, c: [76, 154, 255] },   // cool blue
-      { pos: 0.55, c: [156, 127, 199] }, // transitional violet
-      { pos: 1, c: [217, 163, 92] },   // warm amber
-    ];
-
-    const colorAt = (t) => {
-      t = Math.min(Math.max(t, 0), 1);
-      for (let i = 0; i < stops.length - 1; i++) {
-        const a = stops[i], b = stops[i + 1];
-        if (t >= a.pos && t <= b.pos) {
-          const localT = (t - a.pos) / (b.pos - a.pos);
-          return a.c.map((v, idx) => Math.round(v + (b.c[idx] - v) * localT));
-        }
-      }
-      return stops[stops.length - 1].c;
-    };
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
@@ -111,7 +125,7 @@ export function useCursorGlow() {
       const doc = document.documentElement;
       const scrollable = doc.scrollHeight - window.innerHeight;
       const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
-      const [r, g, b] = colorAt(progress);
+      const [r, g, b] = toneColorAt(progress);
 
       node.style.transform = `translate3d(${curX}px, ${curY}px, 0) translate(-50%, -50%)`;
       node.style.background = `radial-gradient(circle, rgba(${r}, ${g}, ${b}, 0.14), transparent 70%)`;
@@ -129,6 +143,90 @@ export function useCursorGlow() {
   }, []);
 
   return ref;
+}
+
+/**
+ * useScrollBlendColor — the CURRENT blended tone color at the present
+ * scroll position (live, updates continuously). Used by elements that
+ * represent "where you are now" — like the nav bar — so they always match
+ * the cursor glow exactly, since both read the same live scroll progress.
+ */
+export function useScrollBlendColor() {
+  const [rgb, setRgb] = useState(TONE_STOPS[0].c);
+
+  useEffect(() => {
+    let raf = null;
+    const compute = () => {
+      const doc = document.documentElement;
+      const scrollable = doc.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
+      setRgb(toneColorAt(progress));
+      raf = null;
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(compute);
+    };
+    compute();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+}
+
+/**
+ * usePositionAccent — a color FIXED to where an element actually sits in
+ * the document (not the current scroll position). Used so that, within a
+ * long section, an early card reads cooler and a later card reads warmer —
+ * matching what the cursor glow shows as it passes each one — instead of
+ * every element in a section sharing one flat color.
+ * Returns [ref, { base, dim, soft }] — three CSS color strings.
+ */
+export function usePositionAccent() {
+  const ref = useRef(null);
+  const [colors, setColors] = useState({
+    base: "rgb(76, 154, 255)",
+    dim: "rgb(53, 115, 196)",
+    soft: "rgb(156, 196, 255)",
+  });
+
+  useEffect(() => {
+    const compute = () => {
+      const node = ref.current;
+      if (!node) return;
+      const rect = node.getBoundingClientRect();
+      const docY = rect.top + window.scrollY + rect.height / 2;
+      const totalH = document.documentElement.scrollHeight;
+      const t = totalH > 0 ? docY / totalH : 0;
+      const base = toneColorAt(t);
+      const dim = shade(base, -0.25);
+      const soft = shade(base, 0.3);
+      setColors({
+        base: `rgb(${base.join(", ")})`,
+        dim: `rgb(${dim.join(", ")})`,
+        soft: `rgb(${soft.join(", ")})`,
+      });
+    };
+
+    compute();
+    window.addEventListener("resize", compute);
+    // recompute after images/fonts settle and may shift layout
+    const t1 = setTimeout(compute, 300);
+    const t2 = setTimeout(compute, 1200);
+    return () => {
+      window.removeEventListener("resize", compute);
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, []);
+
+  return [ref, colors];
 }
 
 /**
