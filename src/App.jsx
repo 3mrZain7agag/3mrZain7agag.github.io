@@ -1,9 +1,14 @@
+import { useState } from "react";
 import { useReveal, useActiveSection, useMagnet, useStackCards, useEdgeFade, useCursorGlow, useScrollBlendColor, usePositionAccent } from "./useMotion";
 
 const socials = {
   github: "https://github.com/3mrZain7agag",
   linkedin: "https://www.linkedin.com/in/amrhagag-dataeng",
-  email: "mailto:amr.hagag.prof@gmail.com",
+  email:
+    "mailto:amr.hagag.prof@gmail.com?subject=" +
+    encodeURIComponent("Let's connect — from your portfolio") +
+    "&body=" +
+    encodeURIComponent("Hi Amr,\n\nI came across your portfolio and wanted to reach out.\n\n"),
 };
 
 const resumeUrl =
@@ -66,25 +71,47 @@ function Nav() {
   const active = useActiveSection(["top", "about", "experience", "projects", "contact"]);
   const linkClass = (id) => (active === id ? "active" : "");
   const tone = useScrollBlendColor();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const links = (
+    <>
+      <li><a href="#about" className={linkClass("about")} onClick={() => setMenuOpen(false)}>About</a></li>
+      <li><a href="#experience" className={linkClass("experience")} onClick={() => setMenuOpen(false)}>Experience</a></li>
+      <li><a href="#projects" className={linkClass("projects")} onClick={() => setMenuOpen(false)}>Projects</a></li>
+      <li><a href="#contact" className={linkClass("contact")} onClick={() => setMenuOpen(false)}>Contact</a></li>
+      <li>
+        <a className="nav-resume" href={resumeUrl} target="_blank" rel="noreferrer">
+          Resume
+        </a>
+      </li>
+    </>
+  );
 
   return (
     <nav className="nav" style={{ "--nav-tone": tone }}>
       <div className="nav-inner">
-        <a className="nav-logo" href="#top">
+        <a className="nav-logo" href="#top" onClick={() => setMenuOpen(false)}>
           Amr <span>Hagag</span>
         </a>
-        <ul className="nav-links">
-          <li><a href="#about" className={linkClass("about")}>About</a></li>
-          <li><a href="#experience" className={linkClass("experience")}>Experience</a></li>
-          <li><a href="#projects" className={linkClass("projects")}>Projects</a></li>
-          <li><a href="#contact" className={linkClass("contact")}>Contact</a></li>
-          <li>
-            <a className="nav-resume" href={resumeUrl} target="_blank" rel="noreferrer">
-              Resume
-            </a>
-          </li>
-        </ul>
+        <ul className="nav-links">{links}</ul>
+        <button
+          className="nav-toggle"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            {menuOpen ? (
+              <path d="M6 6l12 12M6 18L18 6" />
+            ) : (
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            )}
+          </svg>
+        </button>
       </div>
+      {menuOpen && (
+        <ul className="nav-mobile-menu">{links}</ul>
+      )}
     </nav>
   );
 }
