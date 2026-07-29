@@ -1,4 +1,4 @@
-import { useReveal, useActiveSection, useMagnet, useStackCards, useEdgeFade } from "./useMotion";
+import { useReveal, useActiveSection, useMagnet, useStackCards, useEdgeFade, useCursorGlow } from "./useMotion";
 
 const socials = {
   github: "https://github.com/3mrZain7agag",
@@ -537,9 +537,12 @@ function Footer() {
 }
 
 export default function App() {
+  const glowRef = useCursorGlow();
+
   return (
     <div className="page-root">
       <div className="ambient-bg" aria-hidden="true" />
+      <div className="cursor-glow" ref={glowRef} aria-hidden="true" />
       <Nav />
       <div className="wrap pin-wrap">
         <div className="pin-content-col">

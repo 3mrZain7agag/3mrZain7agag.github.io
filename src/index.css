@@ -172,6 +172,26 @@ section { padding: 88px 0; }
   );
 }
 
+/* Cursor-follow glow: eased position, color continuously blends with scroll
+   position via JS (see useCursorGlow). Purely ambient — never intercepts
+   clicks, and disabled for touch devices / prefers-reduced-motion. */
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 460px;
+  height: 460px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  mix-blend-mode: screen;
+  filter: blur(40px);
+  will-change: transform, background;
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .cursor-glow { display: none; }
+}
+
 /* Section-scoped accent tone — content (badges, stats, hover states) shifts
    its accent color to match how far down the page it sits. */
 #about, #experience {
@@ -373,8 +393,8 @@ a.exp-role:hover .exp-link-icon { color: var(--accent); }
 
 /* Sticky-stacking scroll effect for project cards */
 .stack-card-outer {
-  height: 62vh;
-  min-height: 340px;
+  height: 112vh;
+  min-height: 940px;
 }
 .stack-card-outer:last-child {
   height: auto;

@@ -61,6 +61,77 @@ export function useMagnet({ padding = 60, strength = 6 } = {}) {
 }
 
 /**
+ * useCursorGlow — a soft glow that follows the cursor with slight easing
+ * (not 1:1), whose color continuously blends across the page's cool-to-warm
+ * palette based on overall scroll position (not discrete section jumps).
+ * Disabled on touch devices and for prefers-reduced-motion.
+ */
+export function useCursorGlow() {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(hover: none)").matches) return; // no real cursor on touch
+
+    const stops = [
+      { pos: 0, c: [76, 154, 255] },   // cool blue
+      { pos: 0.55, c: [156, 127, 199] }, // transitional violet
+      { pos: 1, c: [217, 163, 92] },   // warm amber
+    ];
+
+    const colorAt = (t) => {
+      t = Math.min(Math.max(t, 0), 1);
+      for (let i = 0; i < stops.length - 1; i++) {
+        const a = stops[i], b = stops[i + 1];
+        if (t >= a.pos && t <= b.pos) {
+          const localT = (t - a.pos) / (b.pos - a.pos);
+          return a.c.map((v, idx) => Math.round(v + (b.c[idx] - v) * localT));
+        }
+      }
+      return stops[stops.length - 1].c;
+    };
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let curX = mouseX;
+    let curY = mouseY;
+    let raf = null;
+
+    const onMove = (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    };
+
+    const loop = () => {
+      curX += (mouseX - curX) * 0.09;
+      curY += (mouseY - curY) * 0.09;
+
+      const doc = document.documentElement;
+      const scrollable = doc.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
+      const [r, g, b] = colorAt(progress);
+
+      node.style.transform = `translate3d(${curX}px, ${curY}px, 0) translate(-50%, -50%)`;
+      node.style.background = `radial-gradient(circle, rgba(${r}, ${g}, ${b}, 0.14), transparent 70%)`;
+
+      raf = requestAnimationFrame(loop);
+    };
+
+    window.addEventListener("mousemove", onMove, { passive: true });
+    raf = requestAnimationFrame(loop);
+
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return ref;
+}
+
+/**
  * useEdgeFade — fades an element out as it scrolls toward/past the top of
  * the viewport, independent of any sticky sibling. Used to dissolve content
  * that should NOT follow a pinned element's motion — it just fades based
